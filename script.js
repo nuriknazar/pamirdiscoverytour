@@ -66,23 +66,76 @@ document.querySelectorAll('.reveal').forEach(el => revealObserver.observe(el));
 // ── MODAL ─────────────────────────────────────────────────
 const modal    = document.getElementById('imageModal');
 const modalImg = document.getElementById('modalImg');
+const prevBtn  = document.querySelector('.modal-prev');
+const nextBtn  = document.querySelector('.modal-next');
+let galleryImages = [];
+let currentGalleryIndex = -1;
+
+function collectGalleryImages() {
+  galleryImages = Array.from(document.querySelectorAll('.gallery-item img, .hotel-item img'))
+    .map(img => img.getAttribute('src'));
+}
+
+function updateModalButtons() {
+  if (!prevBtn || !nextBtn) return;
+  const hasMultiple = galleryImages.length > 1;
+  prevBtn.disabled = !hasMultiple;
+  nextBtn.disabled = !hasMultiple;
+}
 
 function openModal(src) {
+  collectGalleryImages();
+  const index = galleryImages.indexOf(src);
+  if (index !== -1) {
+    currentGalleryIndex = index;
+  } else {
+    currentGalleryIndex = 0;
+  }
+
   modalImg.src = src;
+  modalImg.classList.remove('zoomed');
   modal.classList.add('active');
   document.body.style.overflow = 'hidden';
+  updateModalButtons();
 }
+
+function showGalleryImage(direction) {
+  if (!galleryImages.length) return;
+
+  if (currentGalleryIndex === -1) {
+    currentGalleryIndex = 0;
+  }
+
+  currentGalleryIndex = (currentGalleryIndex + direction + galleryImages.length) % galleryImages.length;
+  const nextSrc = galleryImages[currentGalleryIndex];
+  modalImg.src = nextSrc;
+  modalImg.classList.remove('zoomed');
+  updateModalButtons();
+}
+
 function closeModal() {
   modal.classList.remove('active');
   document.body.style.overflow = '';
+  modalImg.classList.remove('zoomed');
   setTimeout(() => { modalImg.src = ''; }, 300);
 }
+
+modalImg.addEventListener('click', () => {
+  modalImg.classList.toggle('zoomed');
+});
+
 modal.addEventListener('click', e => { if (e.target === modal) closeModal(); });
-document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
+document.addEventListener('keydown', e => {
+  if (!modal.classList.contains('active')) return;
+  if (e.key === 'Escape') closeModal();
+  if (e.key === 'ArrowRight') showGalleryImage(1);
+  if (e.key === 'ArrowLeft') showGalleryImage(-1);
+});
 
 // Expose to HTML
 window.openModal  = openModal;
 window.closeModal = closeModal;
+window.showGalleryImage = showGalleryImage;
 
 // ── INIT ──────────────────────────────────────────────────
 (function init() {

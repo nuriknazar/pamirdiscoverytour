@@ -79,11 +79,23 @@ a, button {
 
 .header-brand span em { color: var(--teal); font-style: normal; }
 
-.site-nav { display: flex; align-items: center; gap: 28px; }
+.site-nav {
+  display: flex;
+  align-items: center;
+  gap: 22px;
+  margin-left: auto;
+  margin-right: -6px;
+  padding-right: 0;
+}
 .site-nav a {
   color: rgba(249,247,244,0.75); text-decoration: none;
-  font-size: 12px; font-weight: 500; letter-spacing: 0.15em;
-  text-transform: uppercase; transition: color 0.2s;
+  font-family: 'Poppins', sans-serif;
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  transition: color 0.2s;
+  white-space: nowrap;
 }
 .site-nav a:hover { color: var(--teal); }
 .nav-cta {
@@ -93,11 +105,11 @@ a, button {
 }
 .nav-cta:hover { background: var(--teal2) !important; }
 
-.lang-toggle { display: flex; gap: 4px; margin-left: 8px; }
+.lang-toggle { display: flex; gap: 4px; margin-left: 6px; }
 .lang-btn {
   background: transparent; border: 1px solid var(--border);
   color: var(--muted); padding: 7px 10px;
-  font-size: 11px; font-family: 'Inter', sans-serif;
+  font-size: 12px; font-family: 'Inter', sans-serif;
   font-weight: 600; letter-spacing: 0.1em;
   cursor: pointer; border-radius: 999px; transition: all 0.2s;
   min-height: 36px;
@@ -108,7 +120,7 @@ a, button {
 
 .hamburger {
   display: none; flex-direction: column; gap: 5px;
-  cursor: pointer; background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.14);
+  cursor: pointer; background: rgba(255,255,255,0.08); border: 1px solid rgba(33, 63, 126, 0.14);
   padding: 10px; border-radius: 12px; width: 46px; height: 46px; align-items: center; justify-content: center;
   box-shadow: 0 8px 20px rgba(0,0,0,0.16);
 }
@@ -575,15 +587,59 @@ a, button {
   background: rgba(0,0,0,0.92); align-items: center; justify-content: center; padding: 20px;
 }
 .modal-overlay.active { display: flex; }
-.modal-img { max-width: 92vw; max-height: 90vh; object-fit: contain; border-radius: 6px; }
-.modal-close-btn {
-  position: absolute; top: 20px; right: 28px;
-  background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2);
-  color: white; font-size: 20px; width: 42px; height: 42px; border-radius: 50%;
-  cursor: pointer; display: flex; align-items: center; justify-content: center;
-  transition: background 0.2s;
+.modal-media {
+  display: flex; align-items: center; justify-content: center;
+  width: min(92vw, 1100px);
+  height: min(90vh, 900px);
+  overflow: hidden;
 }
-.modal-close-btn:hover { background: rgba(255,255,255,0.2); }
+.modal-img {
+  max-width: 100%; max-height: 100%; object-fit: contain; border-radius: 10px;
+  cursor: zoom-in; user-select: none; transition: transform 0.25s ease;
+  transform: scale(1);
+}
+.modal-img.zoomed {
+  transform: scale(1.45);
+  cursor: zoom-out;
+}
+.modal-close-btn,
+.modal-nav-btn {
+  position: absolute; z-index: 1010;
+  background: rgba(255,255,255,0.16); border: 1px solid rgba(255,255,255,0.24);
+  color: white; cursor: pointer; display: flex; align-items: center; justify-content: center;
+  transition: background 0.2s, transform 0.2s;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.28);
+  -webkit-tap-highlight-color: transparent;
+}
+.modal-close-btn {
+  top: 20px; right: 28px;
+  font-size: 20px; width: 48px; height: 48px; border-radius: 50%;
+}
+.modal-nav-btn {
+  top: 50%; transform: translateY(-50%);
+  width: 54px; height: 54px; border-radius: 50%; font-size: 30px;
+}
+.modal-nav-btn:hover,
+.modal-close-btn:hover { background: rgba(255,255,255,0.24); transform: translateY(-50%) scale(1.03); }
+.modal-prev { left: 16px; }
+.modal-next { right: 16px; }
+.modal-overlay .modal-nav-btn:disabled { opacity: 0.45; cursor: not-allowed; transform: translateY(-50%); }
+
+@media (max-width: 640px) {
+  .modal-nav-btn {
+    width: 58px;
+    height: 58px;
+    font-size: 34px;
+  }
+  .modal-prev { left: 10px; }
+  .modal-next { right: 10px; }
+  .modal-close-btn {
+    top: 12px;
+    right: 12px;
+    width: 46px;
+    height: 46px;
+  }
+}
 
 /* ── REVEAL ── */
 .reveal { opacity: 0; transform: translateY(26px); transition: opacity 0.65s ease, transform 0.65s ease; }
@@ -604,8 +660,8 @@ a, button {
   :root { --section-pad: 64px 28px; }
   #site-header { padding: 12px 24px; }
   .header-brand img { width: clamp(92px, 14vw, 132px); height: auto; }
-  .site-nav { gap: 18px; }
-  .site-nav a { font-size: 11px; }
+  .site-nav { gap: 16px; }
+  .site-nav a { font-size: 12px; }
   .hero {
     min-height: 78svh;
     height: auto;

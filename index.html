@@ -638,7 +638,11 @@ We proudly own and operate guesthouses in <strong>Alichur</strong> and <strong>K
 <!-- IMAGE MODAL -->
 <div id="imageModal" class="modal-overlay" role="dialog" aria-modal="true">
   <button class="modal-close-btn" onclick="closeModal()" aria-label="Close">✕</button>
-  <img class="modal-img" id="modalImg" src="" alt="Gallery image">
+  <button class="modal-nav-btn modal-prev" onclick="showGalleryImage(-1)" aria-label="Previous image">‹</button>
+  <div class="modal-media">
+    <img class="modal-img" id="modalImg" src="" alt="Gallery image">
+  </div>
+  <button class="modal-nav-btn modal-next" onclick="showGalleryImage(1)" aria-label="Next image">›</button>
 </div>
 
 
