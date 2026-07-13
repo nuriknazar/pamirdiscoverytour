@@ -29,11 +29,39 @@ window.addEventListener('scroll', () => {
 // ── HAMBURGER ─────────────────────────────────────────────
 const hamburger = document.getElementById('hamburger');
 const siteNav   = document.getElementById('site-nav');
-hamburger.addEventListener('click', () => {
+const navClose  = document.getElementById('nav-close');
+
+function closeMobileNav() {
+  siteNav.classList.remove('open');
+}
+
+function toggleMobileNav() {
   siteNav.classList.toggle('open');
+}
+
+hamburger.addEventListener('click', (e) => {
+  e.stopPropagation();
+  toggleMobileNav();
 });
-siteNav.querySelectorAll('a').forEach(a => {
-  a.addEventListener('click', () => siteNav.classList.remove('open'));
+
+navClose.addEventListener('click', (e) => {
+  e.stopPropagation();
+  closeMobileNav();
+});
+
+siteNav.querySelectorAll('a, button').forEach(el => {
+  el.addEventListener('click', () => closeMobileNav());
+});
+
+document.addEventListener('click', (e) => {
+  if (!siteNav.classList.contains('open')) return;
+  if (!siteNav.contains(e.target) && !hamburger.contains(e.target)) {
+    closeMobileNav();
+  }
+});
+
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape') closeMobileNav();
 });
 
 // ── HERO BG SCALE IN ──────────────────────────────────────
