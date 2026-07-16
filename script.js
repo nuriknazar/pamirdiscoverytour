@@ -174,6 +174,42 @@ function buildMobileGalleryCarousel() {
   }
 }
 
+function handleMobileGallerySwipeStart(e) {
+  if (!mobileGallerySlides.length) return;
+  swipeStartX = e.touches[0].clientX;
+  isDraggingCarousel = true;
+}
+
+function handleMobileGallerySwipeMove(e) {
+  if (!isDraggingCarousel || swipeStartX === null || !mobileGallerySlides.length) return;
+  const deltaX = e.touches[0].clientX - swipeStartX;
+  if (Math.abs(deltaX) < 8) return;
+
+  const track = document.getElementById('galleryMobileTrack');
+  if (!track) return;
+  track.style.transition = 'none';
+  track.style.transform = `translateX(calc(-${mobileGalleryIndex * 100}% + ${deltaX}px))`;
+}
+
+function handleMobileGallerySwipeEnd(e) {
+  if (!isDraggingCarousel || swipeStartX === null || !mobileGallerySlides.length) return;
+  const deltaX = e.changedTouches[0].clientX - swipeStartX;
+  const track = document.getElementById('galleryMobileTrack');
+  if (!track) return;
+
+  track.style.transition = '';
+  if (deltaX < -50) {
+    showMobileGallerySlide(mobileGalleryIndex + 1);
+  } else if (deltaX > 50) {
+    showMobileGallerySlide(mobileGalleryIndex - 1);
+  } else {
+    showMobileGallerySlide(mobileGalleryIndex);
+  }
+
+  swipeStartX = null;
+  isDraggingCarousel = false;
+}
+
 function showHotelCarouselSlide(index) {
   if (!hotelCarouselSlides.length) return;
   hotelCarouselIndex = (index + hotelCarouselSlides.length) % hotelCarouselSlides.length;
@@ -227,42 +263,6 @@ function buildHotelCarousel() {
   if (hotelCarouselSlides.length) {
     showHotelCarouselSlide(0);
   }
-}
-
-function handleMobileGallerySwipeStart(e) {
-  if (!mobileGallerySlides.length) return;
-  swipeStartX = e.touches[0].clientX;
-  isDraggingCarousel = true;
-}
-
-function handleMobileGallerySwipeMove(e) {
-  if (!isDraggingCarousel || swipeStartX === null || !mobileGallerySlides.length) return;
-  const deltaX = e.touches[0].clientX - swipeStartX;
-  if (Math.abs(deltaX) < 8) return;
-
-  const track = document.getElementById('galleryMobileTrack');
-  if (!track) return;
-  track.style.transition = 'none';
-  track.style.transform = `translateX(calc(-${mobileGalleryIndex * 100}% + ${deltaX}px))`;
-}
-
-function handleMobileGallerySwipeEnd(e) {
-  if (!isDraggingCarousel || swipeStartX === null || !mobileGallerySlides.length) return;
-  const deltaX = e.changedTouches[0].clientX - swipeStartX;
-  const track = document.getElementById('galleryMobileTrack');
-  if (!track) return;
-
-  track.style.transition = '';
-  if (deltaX < -50) {
-    showMobileGallerySlide(mobileGalleryIndex + 1);
-  } else if (deltaX > 50) {
-    showMobileGallerySlide(mobileGalleryIndex - 1);
-  } else {
-    showMobileGallerySlide(mobileGalleryIndex);
-  }
-
-  swipeStartX = null;
-  isDraggingCarousel = false;
 }
 
 function handleHotelCarouselSwipeStart(e) {

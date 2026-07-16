@@ -20,7 +20,7 @@
   --section-pad: 90px 48px;
 }
 
-html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; text-size-adjust: 100%; }
+html { scroll-behavior: smooth; }
 
 body {
   background: var(--navy);
@@ -870,12 +870,8 @@ a, button {
 }
 
 @media (max-width: 768px) {
-  html { font-size: 15px; }
-  body { font-size: 15px; }
-  .section { padding: 56px 20px; }
-  .hero { min-height: 74svh; padding: 96px 20px 72px; }
   .hero-bg {
-    background-image: url('images/verticalPamir.jpeg');
+    background-image: url('images/background.jpeg');
     background-position: center center;
   }
   .section-title { font-size: clamp(30px, 7vw, 42px); }
@@ -894,10 +890,6 @@ a, button {
 }
 
 @media (max-width: 640px) {
-  html { font-size: 14px; }
-  body { font-size: 14px; }
-  .section { padding: 48px 16px; }
-  .hero { min-height: 70svh; padding: 88px 16px 68px; }
   #site-header { padding: 10px 16px; }
   .header-brand { padding: 6px 0; }
   .header-brand img { width: clamp(80px, 20vw, 110px); }
