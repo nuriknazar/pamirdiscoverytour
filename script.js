@@ -102,6 +102,10 @@ let mobileGalleryIndex = 0;
 let mobileGallerySlides = [];
 let swipeStartX = null;
 let isDraggingCarousel = false;
+let hotelCarouselIndex = 0;
+let hotelCarouselSlides = [];
+let hotelSwipeStartX = null;
+let isDraggingHotelCarousel = false;
 
 function collectGalleryImages() {
   galleryImages = Array.from(document.querySelectorAll('.gallery-item img, .hotel-item img'))
@@ -170,6 +174,61 @@ function buildMobileGalleryCarousel() {
   }
 }
 
+function showHotelCarouselSlide(index) {
+  if (!hotelCarouselSlides.length) return;
+  hotelCarouselIndex = (index + hotelCarouselSlides.length) % hotelCarouselSlides.length;
+  const track = document.getElementById('hotelMobileTrack');
+  if (!track) return;
+  track.style.transform = `translateX(-${hotelCarouselIndex * 100}%)`;
+
+  document.querySelectorAll('.hotel-mobile-dot').forEach((dot, dotIndex) => {
+    dot.classList.toggle('active', dotIndex === hotelCarouselIndex);
+  });
+}
+
+function buildHotelCarousel() {
+  const track = document.getElementById('hotelMobileTrack');
+  const dots = document.getElementById('hotelMobileDots');
+  if (!track || !dots) return;
+
+  const hotelItems = Array.from(document.querySelectorAll('#hotels .hotels-grid .hotel-item'));
+  if (!hotelItems.length) return;
+
+  track.innerHTML = '';
+  dots.innerHTML = '';
+  hotelCarouselSlides = [];
+
+  hotelItems.forEach((item, index) => {
+    const img = item.querySelector('img');
+    if (!img) return;
+
+    const slide = document.createElement('div');
+    slide.className = 'hotel-mobile-slide';
+    slide.dataset.index = index;
+
+    const slideImg = document.createElement('img');
+    slideImg.src = img.getAttribute('src');
+    slideImg.alt = img.getAttribute('alt') || `Guesthouse photo ${index + 1}`;
+    slideImg.loading = 'lazy';
+
+    slide.appendChild(slideImg);
+    slide.addEventListener('click', () => openModal(img.getAttribute('src')));
+    track.appendChild(slide);
+    hotelCarouselSlides.push(slide);
+
+    const dot = document.createElement('button');
+    dot.className = 'hotel-mobile-dot';
+    dot.type = 'button';
+    dot.setAttribute('aria-label', `Show guesthouse photo ${index + 1}`);
+    dot.addEventListener('click', () => showHotelCarouselSlide(index));
+    dots.appendChild(dot);
+  });
+
+  if (hotelCarouselSlides.length) {
+    showHotelCarouselSlide(0);
+  }
+}
+
 function handleMobileGallerySwipeStart(e) {
   if (!mobileGallerySlides.length) return;
   swipeStartX = e.touches[0].clientX;
@@ -204,6 +263,42 @@ function handleMobileGallerySwipeEnd(e) {
 
   swipeStartX = null;
   isDraggingCarousel = false;
+}
+
+function handleHotelCarouselSwipeStart(e) {
+  if (!hotelCarouselSlides.length) return;
+  hotelSwipeStartX = e.touches[0].clientX;
+  isDraggingHotelCarousel = true;
+}
+
+function handleHotelCarouselSwipeMove(e) {
+  if (!isDraggingHotelCarousel || hotelSwipeStartX === null || !hotelCarouselSlides.length) return;
+  const deltaX = e.touches[0].clientX - hotelSwipeStartX;
+  if (Math.abs(deltaX) < 8) return;
+
+  const track = document.getElementById('hotelMobileTrack');
+  if (!track) return;
+  track.style.transition = 'none';
+  track.style.transform = `translateX(calc(-${hotelCarouselIndex * 100}% + ${deltaX}px))`;
+}
+
+function handleHotelCarouselSwipeEnd(e) {
+  if (!isDraggingHotelCarousel || hotelSwipeStartX === null || !hotelCarouselSlides.length) return;
+  const deltaX = e.changedTouches[0].clientX - hotelSwipeStartX;
+  const track = document.getElementById('hotelMobileTrack');
+  if (!track) return;
+
+  track.style.transition = '';
+  if (deltaX < -50) {
+    showHotelCarouselSlide(hotelCarouselIndex + 1);
+  } else if (deltaX > 50) {
+    showHotelCarouselSlide(hotelCarouselIndex - 1);
+  } else {
+    showHotelCarouselSlide(hotelCarouselIndex);
+  }
+
+  hotelSwipeStartX = null;
+  isDraggingHotelCarousel = false;
 }
 
 function openModal(src) {
@@ -275,11 +370,26 @@ document.querySelectorAll('.gallery-mobile-btn').forEach(btn => {
   });
 });
 
+const hotelMobileTrack = document.getElementById('hotelMobileTrack');
+if (hotelMobileTrack) {
+  hotelMobileTrack.addEventListener('touchstart', handleHotelCarouselSwipeStart, { passive: true });
+  hotelMobileTrack.addEventListener('touchmove', handleHotelCarouselSwipeMove, { passive: true });
+  hotelMobileTrack.addEventListener('touchend', handleHotelCarouselSwipeEnd, { passive: true });
+}
+
+document.querySelectorAll('.hotel-mobile-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const dir = Number(btn.dataset.dir || 1);
+    showHotelCarouselSlide(hotelCarouselIndex + dir);
+  });
+});
+
 // ── INIT ──────────────────────────────────────────────────
 (function init() {
   const saved = localStorage.getItem('pamir_lang') || 'en';
   setLang(saved);
   buildMobileGalleryCarousel();
+  buildHotelCarousel();
   // expose setLang globally for inline buttons
   window.setLang = setLang;
 })();

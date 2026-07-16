@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=0.95, maximum-scale=1, viewport-fit=cover, user-scalable=no">
 <title>Pamir Discovery | Dushanbe ↔ Osh Tours</title>
 <meta name="description" content="Pamir Discovery — Explore the legendary Pamir Highway between Dushanbe and Osh on a private 7-day adventure tour.">
 <link rel="stylesheet" href="styles.css">
@@ -11,7 +11,6 @@
 
 <!-- ══ HEADER ══ -->
 <header id="site-header">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <a class="header-brand" href="#">
     <img src="images/logo.jpg" alt="Pamir Discovery">
     <!-- <span>Pamir Discovery</span> -->
@@ -460,6 +459,15 @@ Comfortable guesthouses and authentic homestays are available throughout the Pam
 We proudly own and operate guesthouses in <strong>Alichur</strong> and <strong>Karakul</strong>, providing our guests with trusted accommodation and a seamless travel experience.
 </p>
     </div>
+    <div class="hotel-mobile-carousel reveal reveal-delay-1" id="hotelMobileCarousel">
+      <div class="hotel-mobile-track" id="hotelMobileTrack"></div>
+      <div class="hotel-mobile-nav">
+        <button class="hotel-mobile-btn" data-dir="-1" aria-label="Previous guesthouse photo">‹</button>
+        <div class="hotel-mobile-dots" id="hotelMobileDots"></div>
+        <button class="hotel-mobile-btn" data-dir="1" aria-label="Next guesthouse photo">›</button>
+      </div>
+    </div>
+
     <div class="hotels-grid reveal reveal-delay-1">
       <div class="hotel-item" onclick="openModal('images/hotel1.jpg')">
         <img src="images/hotel1.jpg" alt="Hotel" loading="lazy">
