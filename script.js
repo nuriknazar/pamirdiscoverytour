@@ -98,6 +98,10 @@ const prevBtn  = document.querySelector('.modal-prev');
 const nextBtn  = document.querySelector('.modal-next');
 let galleryImages = [];
 let currentGalleryIndex = -1;
+let mobileGalleryIndex = 0;
+let mobileGallerySlides = [];
+let swipeStartX = null;
+let isDraggingCarousel = false;
 
 function collectGalleryImages() {
   galleryImages = Array.from(document.querySelectorAll('.gallery-item img, .hotel-item img'))
@@ -109,6 +113,97 @@ function updateModalButtons() {
   const hasMultiple = galleryImages.length > 1;
   prevBtn.disabled = !hasMultiple;
   nextBtn.disabled = !hasMultiple;
+}
+
+function showMobileGallerySlide(index) {
+  if (!mobileGallerySlides.length) return;
+  mobileGalleryIndex = (index + mobileGallerySlides.length) % mobileGallerySlides.length;
+  const track = document.getElementById('galleryMobileTrack');
+  if (!track) return;
+  track.style.transform = `translateX(-${mobileGalleryIndex * 100}%)`;
+
+  document.querySelectorAll('.gallery-mobile-dot').forEach((dot, dotIndex) => {
+    dot.classList.toggle('active', dotIndex === mobileGalleryIndex);
+  });
+}
+
+function buildMobileGalleryCarousel() {
+  const track = document.getElementById('galleryMobileTrack');
+  const dots = document.getElementById('galleryMobileDots');
+  if (!track || !dots) return;
+
+  const galleryItems = Array.from(document.querySelectorAll('#gallery .gallery-grid .gallery-item'));
+  if (!galleryItems.length) return;
+
+  track.innerHTML = '';
+  dots.innerHTML = '';
+  mobileGallerySlides = [];
+
+  galleryItems.forEach((item, index) => {
+    const img = item.querySelector('img');
+    if (!img) return;
+
+    const slide = document.createElement('div');
+    slide.className = 'gallery-mobile-slide';
+    slide.dataset.index = index;
+
+    const slideImg = document.createElement('img');
+    slideImg.src = img.getAttribute('src');
+    slideImg.alt = img.getAttribute('alt') || `Gallery photo ${index + 1}`;
+    slideImg.loading = 'lazy';
+
+    slide.appendChild(slideImg);
+    slide.addEventListener('click', () => openModal(img.getAttribute('src')));
+    track.appendChild(slide);
+    mobileGallerySlides.push(slide);
+
+    const dot = document.createElement('button');
+    dot.className = 'gallery-mobile-dot';
+    dot.type = 'button';
+    dot.setAttribute('aria-label', `Show photo ${index + 1}`);
+    dot.addEventListener('click', () => showMobileGallerySlide(index));
+    dots.appendChild(dot);
+  });
+
+  if (mobileGallerySlides.length) {
+    showMobileGallerySlide(0);
+  }
+}
+
+function handleMobileGallerySwipeStart(e) {
+  if (!mobileGallerySlides.length) return;
+  swipeStartX = e.touches[0].clientX;
+  isDraggingCarousel = true;
+}
+
+function handleMobileGallerySwipeMove(e) {
+  if (!isDraggingCarousel || swipeStartX === null || !mobileGallerySlides.length) return;
+  const deltaX = e.touches[0].clientX - swipeStartX;
+  if (Math.abs(deltaX) < 8) return;
+
+  const track = document.getElementById('galleryMobileTrack');
+  if (!track) return;
+  track.style.transition = 'none';
+  track.style.transform = `translateX(calc(-${mobileGalleryIndex * 100}% + ${deltaX}px))`;
+}
+
+function handleMobileGallerySwipeEnd(e) {
+  if (!isDraggingCarousel || swipeStartX === null || !mobileGallerySlides.length) return;
+  const deltaX = e.changedTouches[0].clientX - swipeStartX;
+  const track = document.getElementById('galleryMobileTrack');
+  if (!track) return;
+
+  track.style.transition = '';
+  if (deltaX < -50) {
+    showMobileGallerySlide(mobileGalleryIndex + 1);
+  } else if (deltaX > 50) {
+    showMobileGallerySlide(mobileGalleryIndex - 1);
+  } else {
+    showMobileGallerySlide(mobileGalleryIndex);
+  }
+
+  swipeStartX = null;
+  isDraggingCarousel = false;
 }
 
 function openModal(src) {
@@ -165,10 +260,26 @@ window.openModal  = openModal;
 window.closeModal = closeModal;
 window.showGalleryImage = showGalleryImage;
 
+// ── MOBILE GALLERY CAROUSEL ───────────────────────────────
+const mobileGalleryTrack = document.getElementById('galleryMobileTrack');
+if (mobileGalleryTrack) {
+  mobileGalleryTrack.addEventListener('touchstart', handleMobileGallerySwipeStart, { passive: true });
+  mobileGalleryTrack.addEventListener('touchmove', handleMobileGallerySwipeMove, { passive: true });
+  mobileGalleryTrack.addEventListener('touchend', handleMobileGallerySwipeEnd, { passive: true });
+}
+
+document.querySelectorAll('.gallery-mobile-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const dir = Number(btn.dataset.dir || 1);
+    showMobileGallerySlide(mobileGalleryIndex + dir);
+  });
+});
+
 // ── INIT ──────────────────────────────────────────────────
 (function init() {
   const saved = localStorage.getItem('pamir_lang') || 'en';
   setLang(saved);
+  buildMobileGalleryCarousel();
   // expose setLang globally for inline buttons
   window.setLang = setLang;
 })();
