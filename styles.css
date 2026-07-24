@@ -7,7 +7,7 @@
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
 :root {
-  --navy:    #325e75;
+  --navy:   #325e75;
   --slate:   #325e75;
   --slate2:  #325e75;
   --teal:    hsl(221, 17%, 79%);
@@ -388,6 +388,42 @@ a, button {
 
 /* ── PRICING ── */
 #pricing { background: var(--navy); }
+.route-map-card {
+  margin-top: 24px;
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  overflow: hidden;
+  background: rgba(255,255,255,0.04);
+  box-shadow: 0 16px 38px rgba(0,0,0,0.16);
+}
+.route-map-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 16px 18px;
+  background: rgba(255,255,255,0.06);
+}
+.route-map-header h3 {
+  font-size: 16px;
+  color: var(--white);
+  font-weight: 700;
+  letter-spacing: 0.04em;
+}
+.route-map-link {
+  color: var(--teal);
+  text-decoration: none;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+.route-map-frame {
+  display: block;
+  width: 100%;
+  min-height: 360px;
+  border: 0;
+}
 .pricing-grid {
   display: grid; grid-template-columns: repeat(3,1fr); gap: 20px; margin-top: 48px;
 }
@@ -825,9 +861,9 @@ a, button {
   html, body {
     overflow-x: hidden;
     overflow-y: auto;
-    height: 100%;
+    height: auto;
     max-width: 100%;
-    -webkit-overflow-scrolling: touch;
+    overscroll-behavior-y: contain;
   }
 
   #site-header {
